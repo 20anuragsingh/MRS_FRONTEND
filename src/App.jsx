@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import NavBar from './components/navbar'
 import Login from './components/login'
@@ -7,17 +8,48 @@ import './App.css'
 
 function AppRoutes() {
   const navigate = useNavigate()
-  const hasToken = Boolean(localStorage.getItem('cinema_token'))
-  const completeLogin = (session) => navigate(session.preferences_completed ? '/browse' : '/onboarding', { replace: true })
+  const [token, setToken] = useState(() => localStorage.getItem('cinema_token'))
 
-  return <Routes>
-    <Route path="/" element={<Login onAuthenticated={completeLogin} />} />
-    <Route path="/onboarding" element={hasToken ? <Favorites onComplete={() => navigate('/browse', { replace: true })} /> : <Navigate to="/" replace />} />
-    <Route path="/browse" element={hasToken ? <NavBar /> : <Navigate to="/" replace />} />
-    <Route path="/profile" element={hasToken ? <NavBar /> : <Navigate to="/" replace />} />
-    <Route path="/details/:mediaType/:tmdbId" element={hasToken ? <MovieDetails /> : <Navigate to="/" replace />} />
-    <Route path="*" element={<Navigate to="/" replace />} />
-  </Routes>
+  const completeLogin = (session) => {
+    if (session?.token) {
+      localStorage.setItem('cinema_token', session.token)
+      setToken(session.token)
+    }
+    navigate(session?.preferences_completed ? '/browse' : '/onboarding', { replace: true })
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('cinema_token')
+    localStorage.removeItem('cinema_user_name')
+    setToken(null)
+    navigate('/', { replace: true })
+  }
+
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={token ? <Navigate to="/browse" replace /> : <Login onAuthenticated={completeLogin} />}
+      />
+      <Route
+        path="/onboarding"
+        element={token ? <Favorites onComplete={() => navigate('/browse', { replace: true })} /> : <Navigate to="/" replace />}
+      />
+      <Route
+        path="/browse"
+        element={token ? <NavBar onLogout={handleLogout} /> : <Navigate to="/" replace />}
+      />
+      <Route
+        path="/profile"
+        element={token ? <NavBar onLogout={handleLogout} /> : <Navigate to="/" replace />}
+      />
+      <Route
+        path="/details/:mediaType/:tmdbId"
+        element={token ? <MovieDetails /> : <Navigate to="/" replace />}
+      />
+      <Route path="*" element={<Navigate to={token ? '/browse' : '/'} replace />} />
+    </Routes>
+  )
 }
 
 function App() {

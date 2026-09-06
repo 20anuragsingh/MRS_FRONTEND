@@ -39,7 +39,8 @@ input:not([type='checkbox']):focus { outline-color: #fff; background: #3c3c3c; }
 .remember input { accent-color: #bdbdbd; margin: 0; }
 .text-button, .switch-copy button, .privacy-copy button { border: 0; padding: 0; color: inherit; background: transparent; }
 .text-button:hover, .switch-copy button:hover, .privacy-copy button:hover { text-decoration: underline; }
-.notice { margin: 2px 0 0; color: #8be69a; font-size: .82rem; }
+.notice { margin: 6px 0 0; color: #8be69a; font-size: .84rem; line-height: 1.4; }
+.error-notice { color: #ff6b6b !important; }
 .switch-copy { margin: 34px 0 0; color: #a9a9a9; font-size: .9rem; }
 .switch-copy button { color: #fff; font-weight: 600; }
 .privacy-copy { margin: 18px 0 0; color: #858585; font-size: .73rem; line-height: 1.45; }
